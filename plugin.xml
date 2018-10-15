@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="cordova-plugin-appice" version="1.1.7">
+    <name>AppICE</name>
+    <description>AppICE Plugin for Cordova/PhoneGap</description>
+    <license>Commercial</license>
+    <keywords>AppICE</keywords>
+
+    <js-module src="www/AppICE.js" name="AppICE">
+        <clobbers target="AppICE" />
+    </js-module>
+
+    <engines>
+        <engine name="cordova" version=">=3.0.0" />
+    </engines>
+
+    <preference name="APPICE_APP_ID" />
+    <preference name="APPICE_APP_KEY" />
+    <preference name="APPICE_API_KEY" />
+
+    <platform name="ios">
+		<config-file>
+			<access origin="*.appice.io" />
+		</config-file>
+
+        <config-file target="*-Info.plist" parent="AppICEAppID">
+            <string>$APPICE_APP_ID</string>
+        </config-file>
+
+        <config-file target="*-Info.plist" parent="AppICEAppKey">
+            <string>$APPICE_APP_KEY</string>
+        </config-file>
+
+        <config-file target="*-Info.plist" parent="AppICEApiKey">
+            <string>$APPICE_API_KEY</string>
+        </config-file>
+
+		<config-file parent="aps-environment" target="*/Entitlements-Debug.plist">
+		    <string>development</string>
+		</config-file>
+		<config-file parent="aps-environment" target="*/Entitlements-Release.plist">
+			<string>production</string>
+		</config-file>
+
+        <config-file target="config.xml" parent="/*">
+            <feature name="AppICEPlugin">
+                <param name="ios-package" value="AppICEPlugin"/>
+                <param name="onload" value="true" />
+            </feature>
+        </config-file>
+
+        <header-file src="src/ios/AppDelegate+AppICEPlugin.h" />
+        <source-file src="src/ios/AppDelegate+AppICEPlugin.m" />
+        <header-file src="src/ios/AppICEPlugin.h" />
+        <source-file src="src/ios/AppICEPlugin.m" />
+        
+        <source-file src="src/ios/AppICESDK/libiosAppiceSDK_v1.7.1.a" framework="true"/>
+        
+        <resource-file src="src/ios/AppICESDK/appICE.momd" />
+    	<resource-file src="src/ios/AppICESDK/appICEBundle.bundle" />
+    	
+    	<header-file src="src/ios/AppICESDK/include/iosAppiceSDK/appICE.h" target-dir="./include" />
+    	<header-file src="src/ios/AppICESDK/include/iosAppiceSDK/appICEDB.h" target-dir="./include" />
+    	<header-file src="src/ios/AppICESDK/include/iosAppiceSDK/appICEUserDetails.h" target-dir="./include" />
+        
+        <!-- Reachability -->
+        <header-file src="src/ios/ThirdParty/Reachability/Reachability.h" target-dir="./ThirdParty/Reachability/" />
+        <source-file src="src/ios/ThirdParty/Reachability/Reachability.m" target-dir="./ThirdParty/Reachability/" compiler-flags="-fno-objc-arc" />
+        <!-- ASI-Http-Request -->
+        <header-file src="src/ios/ThirdParty/asi-http-request/ASIAuthenticationDialog.h" target-dir="./ThirdParty/asi-http-request" />
+        <source-file src="src/ios/ThirdParty/asi-http-request/ASIAuthenticationDialog.m" target-dir="./ThirdParty/asi-http-request" compiler-flags="-fno-objc-arc" />
+        <header-file src="src/ios/ThirdParty/asi-http-request/ASICacheDelegate.h" target-dir="./ThirdParty/asi-http-request" />
+        <header-file src="src/ios/ThirdParty/asi-http-request/ASIDataCompressor.h" target-dir="./ThirdParty/asi-http-request" />
+        <source-file src="src/ios/ThirdParty/asi-http-request/ASIDataCompressor.m" target-dir="./ThirdParty/asi-http-request" compiler-flags="-fno-objc-arc" />
+        <header-file src="src/ios/ThirdParty/asi-http-request/ASIDataDecompressor.h" target-dir="./ThirdParty/asi-http-request" />
+        <source-file src="src/ios/ThirdParty/asi-http-request/ASIDataDecompressor.m" target-dir="./ThirdParty/asi-http-request" compiler-flags="-fno-objc-arc" />
+        <header-file src="src/ios/ThirdParty/asi-http-request/ASIDownloadCache.h" target-dir="./ThirdParty/asi-http-request" />
+        <source-file src="src/ios/ThirdParty/asi-http-request/ASIDownloadCache.m" target-dir="./ThirdParty/asi-http-request" compiler-flags="-fno-objc-arc" />
+        <header-file src="src/ios/ThirdParty/asi-http-request/ASIFormDataRequest.h" target-dir="./ThirdParty/asi-http-request" />
+        <source-file src="src/ios/ThirdParty/asi-http-request/ASIFormDataRequest.m" target-dir="./ThirdParty/asi-http-request" compiler-flags="-fno-objc-arc" />
+        <header-file src="src/ios/ThirdParty/asi-http-request/ASIHTTPRequest.h" target-dir="./ThirdParty/asi-http-request" />
+        <source-file src="src/ios/ThirdParty/asi-http-request/ASIHTTPRequest.m" target-dir="./ThirdParty/asi-http-request" compiler-flags="-fno-objc-arc" />
+        <header-file src="src/ios/ThirdParty/asi-http-request/ASIHTTPRequestConfig.h" target-dir="./ThirdParty/asi-http-request" />
+        <header-file src="src/ios/ThirdParty/asi-http-request/ASIHTTPRequestDelegate.h" target-dir="./ThirdParty/asi-http-request" />
+        <header-file src="src/ios/ThirdParty/asi-http-request/ASIInputStream.h" target-dir="./ThirdParty/asi-http-request" />
+        <source-file src="src/ios/ThirdParty/asi-http-request/ASIInputStream.m" target-dir="./ThirdParty/asi-http-request" compiler-flags="-fno-objc-arc" />
+        <header-file src="src/ios/ThirdParty/asi-http-request/ASINetworkQueue.h" target-dir="./ThirdParty/asi-http-request" />
+        <source-file src="src/ios/ThirdParty/asi-http-request/ASINetworkQueue.m" target-dir="./ThirdParty/asi-http-request" compiler-flags="-fno-objc-arc" />
+        <header-file src="src/ios/ThirdParty/asi-http-request/ASIProgressDelegate.h" target-dir="./ThirdParty/asi-http-request" />
+        <!-- ASI-Http-Request -->
+        <header-file src="src/ios/ThirdParty/SBJsonParser/JSON.h" target-dir="./ThirdParty/SBJsonParser" />
+        <header-file src="src/ios/ThirdParty/SBJsonParser/NSObject+SBJson.h" target-dir="./ThirdParty/SBJsonParser" />
+        <source-file src="src/ios/ThirdParty/SBJsonParser/NSObject+SBJson.m" target-dir="./ThirdParty/SBJsonParser" compiler-flags="-fno-objc-arc" />
+        <header-file src="src/ios/ThirdParty/SBJsonParser/SBJson.h" target-dir="./ThirdParty/SBJsonParser" />
+        <header-file src="src/ios/ThirdParty/SBJsonParser/SBJsonParser.h" target-dir="./ThirdParty/SBJsonParser" />
+        <source-file src="src/ios/ThirdParty/SBJsonParser/SBJsonParser.m" target-dir="./ThirdParty/SBJsonParser" compiler-flags="-fno-objc-arc" />
+        <header-file src="src/ios/ThirdParty/SBJsonParser/SBJsonStreamParser.h" target-dir="./ThirdParty/SBJsonParser" />
+        <source-file src="src/ios/ThirdParty/SBJsonParser/SBJsonStreamParser.m" target-dir="./ThirdParty/SBJsonParser" compiler-flags="-fno-objc-arc" />
+        <header-file src="src/ios/ThirdParty/SBJsonParser/SBJsonStreamParserAccumulator.h" target-dir="./ThirdParty/SBJsonParser" />
+        <source-file src="src/ios/ThirdParty/SBJsonParser/SBJsonStreamParserAccumulator.m" target-dir="./ThirdParty/SBJsonParser" compiler-flags="-fno-objc-arc" />
+        <header-file src="src/ios/ThirdParty/SBJsonParser/SBJsonStreamParserAdapter.h" target-dir="./ThirdParty/SBJsonParser" />
+        <source-file src="src/ios/ThirdParty/SBJsonParser/SBJsonStreamParserAdapter.m" target-dir="./ThirdParty/SBJsonParser" compiler-flags="-fno-objc-arc" />
+        <header-file src="src/ios/ThirdParty/SBJsonParser/SBJsonStreamParserState.h" target-dir="./ThirdParty/SBJsonParser" />
+        <source-file src="src/ios/ThirdParty/SBJsonParser/SBJsonStreamParserState.m" target-dir="./ThirdParty/SBJsonParser" compiler-flags="-fno-objc-arc" />
+        <header-file src="src/ios/ThirdParty/SBJsonParser/SBJsonStreamWriter.h" target-dir="./ThirdParty/SBJsonParser" />
+        <source-file src="src/ios/ThirdParty/SBJsonParser/SBJsonStreamWriter.m" target-dir="./ThirdParty/SBJsonParser" compiler-flags="-fno-objc-arc" />
+        <header-file src="src/ios/ThirdParty/SBJsonParser/SBJsonStreamWriterAccumulator.h" target-dir="./ThirdParty/SBJsonParser" />
+        <source-file src="src/ios/ThirdParty/SBJsonParser/SBJsonStreamWriterAccumulator.m" target-dir="./ThirdParty/SBJsonParser" compiler-flags="-fno-objc-arc" />
+        <header-file src="src/ios/ThirdParty/SBJsonParser/SBJsonStreamWriterState.h" target-dir="./ThirdParty/SBJsonParser" />
+        <source-file src="src/ios/ThirdParty/SBJsonParser/SBJsonStreamWriterState.m" target-dir="./ThirdParty/SBJsonParser" compiler-flags="-fno-objc-arc" />
+        <header-file src="src/ios/ThirdParty/SBJsonParser/SBJsonTokeniser.h" target-dir="./ThirdParty/SBJsonParser" />
+        <source-file src="src/ios/ThirdParty/SBJsonParser/SBJsonTokeniser.m" target-dir="./ThirdParty/SBJsonParser" compiler-flags="-fno-objc-arc" />
+        <header-file src="src/ios/ThirdParty/SBJsonParser/SBJsonUTF8Stream.h" target-dir="./ThirdParty/SBJsonParser" />
+        <source-file src="src/ios/ThirdParty/SBJsonParser/SBJsonUTF8Stream.m" target-dir="./ThirdParty/SBJsonParser" compiler-flags="-fno-objc-arc" />
+        <header-file src="src/ios/ThirdParty/SBJsonParser/SBJsonWriter.h" target-dir="./ThirdParty/SBJsonParser" />
+        <source-file src="src/ios/ThirdParty/SBJsonParser/SBJsonWriter.m" target-dir="./ThirdParty/SBJsonParser" compiler-flags="-fno-objc-arc" />
+        
+        <framework src="NotificationCenter.framework" />
+        <framework src="UserNotificationsUI.framework" weak="true"/>
+        <framework src="UserNotifications.framework" />
+        <framework src="Security.framework" />
+        <framework src="CoreFoundation.framework" />
+        <framework src="CFNetwork.framework" />
+        <framework src="AVFoundation.framework" />
+        <framework src="QuartzCore.framework" />
+        <framework src="ImageIO.framework" />
+        <framework src="AssetsLibrary.framework" />
+        <framework src="SystemConfiguration.framework" />
+        <framework src="CoreData.framework" />
+        <framework src="CoreTelephony.framework" />
+        <framework src="CoreGraphics.framework" />
+        <framework src="UIKit.framework" />
+        <framework src="Foundation.framework" />
+    </platform>
+    
+    <platform name="android">
+    	<config-file>
+    		<access origin="*.appice.io" />
+    	</config-file>
+    	
+    	<config-file target="config.xml" parent="/*">
+    		<feature name="AppICEPlugin">
+    			<param name="android-package" value="com.appice.cordova.AppICEPlugin" />
+    			<param name="onload" value="true" />
+    		</feature>
+    	</config-file>
+    	
+    	<config-file target="AndroidManifest.xml" parent="/manifest">
+    		<uses-permission android:name="android.permission.INTERNET"/>
+    		<permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" android:protectionLevel="signature"/>
+      		<uses-permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE"/>
+    	</config-file>
+    	
+		<config-file target="AndroidManifest.xml" parent="/manifest/application">
+			<receiver android:name="com.appice.cordova.CampaignCampsReceiver">
+            	<intent-filter>
+            	    <action android:name="com.appice.campaignEvent" />
+            	</intent-filter>
+        	</receiver>
+        	<service
+           		android:name="com.appice.cordova.NotificationEventService"
+            	android:permission="android.permission.BIND_JOB_SERVICE">
+            	<intent-filter>
+                	<action android:name="com.appice.campaignEvent" />
+            	</intent-filter>
+        	</service>
+        	
+			<meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
+			<meta-data android:name="com.semusi.analytics.appid" android:value="$APPICE_APP_ID"/>
+        	<meta-data android:name="com.semusi.analytics.appkey" android:value="$APPICE_APP_KEY"/>
+        	<meta-data android:name="com.semusi.analytics.apikey" android:value="$APPICE_API_KEY"/>
+		</config-file>
+		
+		<source-file src="src/android/AppICEPlugin.java" target-dir="src/com/appice/cordova/" />
+		<source-file src="src/android/CampaignCampsReceiver.java" target-dir="src/com/appice/cordova/" />
+		<source-file src="src/android/NotificationEventService.java" target-dir="src/com/appice/cordova/" />
+		
+		<framework src="com.google.android.gms:play-services-gcm:16.0.0" />
+		<framework src="com.google.android.gms:play-services-ads:16.0.0" />
+		<framework src="com.google.android.gms:play-services-location:16.0.0" />
+		<framework src="com.android.support:support-v4:+" />
+		<framework src="appice.io.android:sdk:+" />
+    	
+    	<hook type="after_plugin_add" src="scripts/androidAfterPluginAdd.js" />
+    	
+    </platform>
+</plugin>
