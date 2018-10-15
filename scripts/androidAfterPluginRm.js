@@ -5,11 +5,11 @@ module.exports = function(context) {
 	var fs = context.requireCordovaModule('fs');
 	var path = context.requireCordovaModule('path');
 	var shell = require('shelljs');
-
+	
 	var platformRoot = path.join(context.opts.projectRoot, 'platforms/android');
 	var pluginsFirebaseRoot = path.join(context.opts.projectRoot, 'plugins/cordova-plugin-firebase');
 	var pluginsAppiceRoot = path.join(context.opts.projectRoot, 'plugins/cordova-plugin-appice');
-
+		
 	var firebaseFile1 = path.join(platformRoot, '/app/src/main/java/org/apache/cordova/firebase/FirebasePluginMessagingService.java');
 	if (fs.existsSync(firebaseFile1)) {
 		try {
@@ -17,13 +17,13 @@ module.exports = function(context) {
 		} catch(err) {
 		}
 	}
-
-	var modifiedFile1 = path.join(pluginsAppiceRoot, '/src/firebase/modified/android/FirebasePluginMessagingService.java');
+	
+	var modifiedFile1 = path.join(pluginsAppiceRoot, '/src/firebase/original/android/FirebasePluginMessagingService.java');
 	try {
 		shell.cp('-f', modifiedFile1, firebaseFile1);
 	} catch(err) {
 	}
-
+	
 	var firebaseFile2 = path.join(pluginsFirebaseRoot, '/src/android/FirebasePluginMessagingService.java');
 	if (fs.existsSync(firebaseFile2)) {
 		try {
@@ -31,7 +31,7 @@ module.exports = function(context) {
 		} catch(err) {
 		}
 	}
-
+	
 	try {
 		shell.cp('-f', modifiedFile1, firebaseFile2);
 	} catch(err) {
@@ -46,7 +46,7 @@ module.exports = function(context) {
 				}
 				var appClass = 'semusi.activitysdk.ContextApplication';
 				if (data.indexOf(appClass) == -1) {
-					var result = data.replace(/<application/g, '<application android:name="' + appClass + '"');
+					var result = data.replace('<application android:name="' + appClass + '"', /<application/g);
 					fs.writeFile(manifestFile, result, 'utf8', function (err) {
 						if (err) {
 							throw new Error('Unable to write into AndroidManifest.xml: ' + err);
@@ -67,7 +67,7 @@ module.exports = function(context) {
 					}
 					var appClass = 'semusi.activitysdk.ContextApplication';
 					if (data.indexOf(appClass) == -1) {
-						var result = data.replace(/<application/g, '<application android:name="' + appClass + '"');
+						var result = data.replace('<application android:name="' + appClass + '"', /<application/g);
 						fs.writeFile(manifestFileNew, result, 'utf8', function (err) {
 							if (err) {
 								throw new Error('Unable to write into AndroidManifest.xml: ' + err);
