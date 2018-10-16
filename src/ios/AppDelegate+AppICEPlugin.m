@@ -108,7 +108,7 @@ static id appdelegate;
 - (void) application:(UIApplication*)application didReceiveLocalNotification:(UILocalNotification*)notification {
     
     @try {
-        [[NSNotificationCenter defaultCenter] postNotificationName:AIDidReceiveLocalNotification object:notification.userInfo];
+        [[NSNotificationCenter defaultCenter] postNotificationName:AIDidReceiveLocalNotification object:notification];
     } @catch (NSException *exception) {
         
     } @finally {

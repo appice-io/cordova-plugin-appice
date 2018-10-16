@@ -121,16 +121,19 @@ static NSInteger const kNotificationStackSize = 10;
         }
         else
         {
-//            NSDictionary* userInfo = [notification userInfo];
+            NSDictionary* userInfo = [notification userInfo];
             //        NSLog(@"UserInfo = %@", userInfo);
             
-            NSString* campid = [[notification userInfo] objectForKey:@"campid"];
+//            NSString* campid = [[notification userInfo] objectForKey:@"campid"];
             //        NSLog(@"campid = %@", campid);
             
             NSInteger numberOfBadges = [UIApplication sharedApplication].applicationIconBadgeNumber;
             numberOfBadges -=1;
             [[UIApplication sharedApplication] setApplicationIconBadgeNumber:numberOfBadges];
-            [[appICE sharedInstance] openuUrlOnPushClick:campid];
+            
+            [[appICE sharedInstance] handleclickonpush:userInfo];
+            
+            [self sendCallback:userInfo];
         }
         
         if (application.applicationState==UIApplicationStateActive)
@@ -199,15 +202,17 @@ static NSInteger const kNotificationStackSize = 10;
             [[NSUserDefaults standardUserDefaults] setObject:@"NOLOCAL" forKey:@"NOLOCAL"];
             
             if ([[[UIDevice currentDevice] systemVersion] floatValue] <= 10.0) {
-                UILocalNotification *localNotification = [[UILocalNotification alloc] init];
-                localNotification.userInfo = userInfo;
                 NSDictionary *datadict=[userInfo objectForKey:@"data"];
-                NSString *msg =  [datadict objectForKey:@"nd"];
-                localNotification.soundName = UILocalNotificationDefaultSoundName;
-                localNotification.alertBody =  msg;
-                localNotification.fireDate = [NSDate date];
-                localNotification.userInfo = userInfo;
-                [[UIApplication sharedApplication] scheduleLocalNotification:localNotification];
+                if (datadict != NULL) {
+                    UILocalNotification *localNotification = [[UILocalNotification alloc] init];
+                    localNotification.userInfo = userInfo;
+                    NSString *msg =  [datadict objectForKey:@"nd"];
+                    localNotification.soundName = UILocalNotificationDefaultSoundName;
+                    localNotification.alertBody =  msg;
+                    localNotification.fireDate = [NSDate date];
+                    localNotification.userInfo = userInfo;
+                    [[UIApplication sharedApplication] scheduleLocalNotification:localNotification];
+                }
             }
             
             [appICE receivePushNotification:userInfo];
