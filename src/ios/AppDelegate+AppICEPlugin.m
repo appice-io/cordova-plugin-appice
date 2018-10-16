@@ -17,12 +17,29 @@
 
 @implementation AppDelegate (AppICEPlugin)
 
+static id appdelegate;
+
 + (void)load {
 //    Method original = class_getInstanceMethod(self, @selector(application:didFinishLaunchingWithOptions:));
 //    Method swizzled = class_getInstanceMethod(self, @selector(application:swizzledDidFinishLaunchingWithOptions:));
 //    method_exchangeImplementations(original, swizzled);
     
     NSLog(@"Appice+delegate loaded");
+}
+
++(id) delegate{
+    return appdelegate;
+}
+
+- (id)init
+{
+    self = [super init];
+    
+    appdelegate = self;
+    
+    NSLog(@"Appice+delegate init");
+    
+    return self;
 }
 
 //- (void)setApplicationInBackground:(NSNumber *)applicationInBackground {
@@ -67,55 +84,90 @@
 #pragma mark - Register Remote Notification
 
 - (void)application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken {
-    
-    NSString* token = [[[[deviceToken description]
-                         stringByReplacingOccurrencesOfString:@"<" withString:@""]
-                        stringByReplacingOccurrencesOfString:@">" withString:@""]
-                       stringByReplacingOccurrencesOfString:@" " withString:@""];
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:AIRemoteNotificationDidRegister object:token];
+    @try {
+        NSString* token = [[[[deviceToken description]
+                             stringByReplacingOccurrencesOfString:@"<" withString:@""]
+                            stringByReplacingOccurrencesOfString:@">" withString:@""]
+                           stringByReplacingOccurrencesOfString:@" " withString:@""];
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:AIRemoteNotificationDidRegister object:token];
+    } @catch(NSException *e){}
 }
 
 - (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error {
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:AIRemoteNotificationRegisterError object:error];
+    @try {
+        [[NSNotificationCenter defaultCenter] postNotificationName:AIRemoteNotificationRegisterError object:error];
+    } @catch (NSException *exception) {
+    } @finally {
+    }
 }
 
 #pragma mark - Handle Notification info
 
 - (void) application:(UIApplication*)application didReceiveLocalNotification:(UILocalNotification*)notification {
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:AIDidReceiveLocalNotification object:notification.userInfo];
+    @try {
+        [[NSNotificationCenter defaultCenter] postNotificationName:AIDidReceiveLocalNotification object:notification.userInfo];
+    } @catch (NSException *exception) {
+        
+    } @finally {
+        
+    }
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-    [[NSNotificationCenter defaultCenter] postNotificationName:AIDidReceiveRemoteNotification object:userInfo];
+    @try {
+        [[NSNotificationCenter defaultCenter] postNotificationName:AIDidReceiveRemoteNotification object:userInfo];
+    } @catch (NSException *exception) {
+        
+    } @finally {
+        
+    }
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
 fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:AIDidReceiveRemoteFNotification object:userInfo];
-    
-    completionHandler(UIBackgroundFetchResultNewData);
+    @try {
+        [[NSNotificationCenter defaultCenter] postNotificationName:AIDidReceiveRemoteFNotification object:userInfo];
+        
+        completionHandler(UIBackgroundFetchResultNewData);
+    } @catch (NSException *exception) {
+        
+    } @finally {
+        
+    }
 }
 
 #if defined(__IPHONE_10_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
        willPresentNotification:(UNNotification *)notification
          withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler {
-   [[NSNotificationCenter defaultCenter] postNotificationName:AIDidReceiveRemoteNotification object:notification.request.content.userInfo];
-
-	completionHandler(UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionBadge | UNNotificationPresentationOptionSound);
+    @try {
+        [[NSNotificationCenter defaultCenter] postNotificationName:AIDidReceiveRemoteNotification object:notification.request.content.userInfo];
+        
+        completionHandler(UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionBadge | UNNotificationPresentationOptionSound);
+    } @catch (NSException *exception) {
+        
+    } @finally {
+        
+    }
 }
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void(^)())completionHandler{
     
-    NSDictionary *userInfo = response.notification.request.content.userInfo;
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:AIDidReceiveNotificationResponse object:userInfo];
-    
-    completionHandler();
+    @try {
+        NSDictionary *userInfo = response.notification.request.content.userInfo;
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:AIDidReceiveNotificationResponse object:userInfo];
+        
+        completionHandler();
+    } @catch (NSException *exception) {
+        
+    } @finally {
+        
+    }
 }
 #endif
 
@@ -123,42 +175,73 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
 
 - (void)application:(UIApplication *)application handleActionWithIdentifier:(NSString *)identifier forLocalNotification:(UILocalNotification *)notification completionHandler:(void(^)())completionHandler {
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:AIHandleActionNotification object:identifier];
-    
-    if (completionHandler) {
-        completionHandler();
+    @try {
+        [[NSNotificationCenter defaultCenter] postNotificationName:AIHandleActionNotification object:identifier];
+        
+        if (completionHandler) {
+            completionHandler();
+        }
+    } @catch (NSException *exception) {
+        
+    } @finally {
+        
     }
 }
 
 - (void)application:(UIApplication *)application handleActionWithIdentifier:(NSString *)identifier forRemoteNotification:(NSDictionary *)userInfo completionHandler:(void (^)())completionHandler
 {
-    [[NSNotificationCenter defaultCenter] postNotificationName:AIHandleActionNotification object:identifier];
-    
-    if (completionHandler) {
-        completionHandler();
+    @try {
+        [[NSNotificationCenter defaultCenter] postNotificationName:AIHandleActionNotification object:identifier];
+        
+        if (completionHandler) {
+            completionHandler();
+        }
+    } @catch (NSException *exception) {
+        
+    } @finally {
+        
     }
 }
 
 #pragma mark - OpenURL Functions
 
 - (BOOL)application:(UIApplication*)application openURL:(NSURL*)url sourceApplication:(NSString*)sourceApplication annotation:(id)annotation {
-    if (!url) {
-        return NO;
+    @try {
+        if (!url) {
+            return NO;
+        }
+        [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:AIHandleOpenURLNotification object:url]];
+    } @catch (NSException *exception) {
+        
+    } @finally {
+        
     }
-    [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:AIHandleOpenURLNotification object:url]];
     return YES;
 }
 
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary *)options {
-    if (!url) {
-        return NO;
+    @try {
+        if (!url) {
+            return NO;
+        }
+        [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:AIHandleOpenURLNotification object:url]];
+    
+    } @catch (NSException *exception) {
+        
+    } @finally {
+        
     }
-    [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:AIHandleOpenURLNotification object:url]];
     return YES;
 }
 
 - (void)openURL:(NSURL*)url options:(NSDictionary<NSString *, id> *)options completionHandler:(void (^ __nullable)(BOOL success))completion {
-    [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:AIHandleOpenURLNotification object:url]];
+    @try {
+        [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:AIHandleOpenURLNotification object:url]];
+    } @catch (NSException *exception) {
+        
+    } @finally {
+        
+    }
 }
 
 @end

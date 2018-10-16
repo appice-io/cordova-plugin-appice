@@ -3,4 +3,6 @@
 
 @interface AppDelegate (AppICEPlugin)
 
++(id) delegate;
+
 @end
