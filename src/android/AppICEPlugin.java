@@ -12,6 +12,13 @@ package com.appice.cordova;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
@@ -73,9 +80,32 @@ public class AppICEPlugin extends CordovaPlugin {
         onNewIntent(cordova.getActivity().getIntent());
     }
 
+    private void validateCordovaIntegration(Context ctx) {
+        try {
+            PackageManager pm = ctx.getPackageManager();
+
+            Intent receiverIntent = new Intent();
+            receiverIntent.setClass(ctx, CampaignCampsReceiver.class);
+            List<ResolveInfo> receivers = pm.queryBroadcastReceivers(receiverIntent, 0);
+            if (receivers == null || receivers.size() <= 0)
+                Toast.makeText(ctx, "Missing Receiver entry in AndroidManifest : CampaignCampsReceiver", Toast.LENGTH_LONG).show();
+
+            Intent serviceIntent = new Intent();
+            serviceIntent.setClass(ctx, NotificationEventService.class);
+            ResolveInfo services = pm.resolveService(serviceIntent, 0);
+            if (services == null)
+                Toast.makeText(ctx, "Missing Service entry in AndroidManifest : NotificationEventService", Toast.LENGTH_LONG).show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @CordovaMethod
     private void startContext(JSONArray data, CallbackContext callbackContext) {
         try {
+            validateCordovaIntegration(cordova.getActivity().getApplicationContext());
+
             SdkConfig config = new SdkConfig();
 
             try {
@@ -88,6 +118,38 @@ public class AppICEPlugin extends CordovaPlugin {
 
             // Init sdk with your config
             Api.startContext(cordova.getActivity().getApplicationContext(), config);
+            callbackContext.success();
+        } catch (Exception e) {
+            e.printStackTrace();
+            callbackContext.error(e.getMessage());
+        }
+    }
+
+    @CordovaMethod
+    private void initSdk(JSONArray data, CallbackContext callbackContext) {
+        try {
+            validateCordovaIntegration(cordova.getActivity().getApplicationContext());
+
+            SdkConfig config = new SdkConfig();
+
+            String appId = "", appKey = "", apiKey = "";
+            try {
+                JSONObject root = data.getJSONObject(0);
+                String gcmid = root.optString("gcmID");
+                if (gcmid != null && gcmid.length() > 0) {
+                    config.setGcmSenderId(gcmid);
+                }
+
+                appId = root.optString("appID");
+                appKey = root.optString("appKey");
+                apiKey = root.optString("apiKey");
+            } catch (Exception e) {
+            }
+
+            // Init sdk with your config
+            Api.initSdk(appId, appKey, apiKey, cordova.getActivity().getApplicationContext());
+            Api.startContext(cordova.getActivity().getApplicationContext(), config);
+
             callbackContext.success();
         } catch (Exception e) {
             e.printStackTrace();
@@ -610,6 +672,41 @@ public class AppICEPlugin extends CordovaPlugin {
         }
     }
 
+    @CordovaMethod
+    private void trackTouches(JSONArray data, CallbackContext callbackContext) {
+        try {
+            DisplayMetrics dm = new DisplayMetrics();
+            cordova.getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
+            int screenWidth = dm.widthPixels;
+            int screenHeight = dm.heightPixels;
+
+            JSONObject root = data.getJSONObject(0);
+            if (root != null) {
+                double webWidth = (double) root.optInt("w");
+                double webHeight = (double) root.optInt("h");
+
+                double x = root.optDouble("x");
+                double y = root.optDouble("y");
+
+                double wRatio = (screenWidth / webWidth);
+                double hRatio = (screenHeight / webHeight);
+
+                double x1 = x * wRatio;
+                double y1 = y * hRatio;
+                root.put("x", x1);
+                root.put("y", y1);
+            }
+
+            View rootView = cordova.getActivity().getWindow().getDecorView().getRootView();
+            ContextSdk.trackTouches(root, cordova.getActivity().getApplicationContext(), rootView, cordova.getActivity());
+
+            callbackContext.success();
+        } catch (Exception e) {
+            e.printStackTrace();
+            callbackContext.error(e.getMessage());
+        }
+    }
+
     @Override
     public boolean execute(String action, JSONArray data, CallbackContext callbackId) {
         Method method = exportedMethods.get(action);
@@ -643,6 +740,7 @@ public class AppICEPlugin extends CordovaPlugin {
 
             return;
         }
+
         try {
             final CallbackContext callbackContext = AppICEPlugin.notificationCallbackContext;
             if (callbackContext != null && bundle != null) {

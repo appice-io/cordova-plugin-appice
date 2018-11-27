@@ -29,14 +29,7 @@ static NSInteger const kNotificationStackSize = 10;
         // Listen for UIApplicationDidFinishLaunchingNotification to get a hold of launchOptions
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onDidFinishLaunchingNotification:) name:UIApplicationDidFinishLaunchingNotification object:nil];
         
-        // Listen to re-broadcast events from Cordova's AppDelegate
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onDidFailToRegisterForRemoteNotificationsWithError:) name:AIRemoteNotificationRegisterError object:nil];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onHandleRegisterForRemoteNotification:) name:AIRemoteNotificationDidRegister object:nil];
     } @catch (NSException *exception) {
-        
-    } @finally {
-        
     }
 }
 
@@ -45,30 +38,18 @@ static NSInteger const kNotificationStackSize = 10;
     
 }
 
-+(void)onDidFailToRegisterForRemoteNotificationsWithError:(NSNotification *)notification {
-    //Log Failure
-    NSLog(@"Failed to get register for token, Error");
-}
-
-+(void)onHandleRegisterForRemoteNotification:(NSNotification *)deviceToken {
-    @try {
-        NSLog(@"Apns token : %@", deviceToken.object);
-        [appICE setTokenInPushNotification:deviceToken.object];
-    } @catch (NSException *exception) {
-        
-    } @finally {
-        
-    }
-}
-
 -(void)handleToken:(NSData *)deviceToken {
     @try {
         NSLog(@"Apns token : %@", deviceToken);
         [appICE setTokenInPushNotification:deviceToken];
     } @catch (NSException *exception) {
-        
-    } @finally {
-        
+    }
+}
+
+-(void)handleTokenError:(NSError *)error {
+    @try {
+        NSLog(@"Apns token Error : %@", error.description);
+    } @catch (NSException *exception) {
     }
 }
 
@@ -86,19 +67,10 @@ static NSInteger const kNotificationStackSize = 10;
         NSString *appid = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"AppICEAppID"];
         NSString *appkey = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"AppICEAppKey"];
         NSString *apikey = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"AppICEApiKey"];
-        [appICE setupKeys:appkey withapiKey:apikey withappId:appid otherSdkdeviceId:@""];
         
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onHandleOpenURLNotification:) name: AIHandleOpenURLNotification object:nil];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onHandleLocalNotification:) name:AIDidReceiveLocalNotification object:nil];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onHandleRemoteNotification:) name:AIDidReceiveRemoteNotification object:nil];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onHandleRemoteFNotification:) name:AIDidReceiveRemoteFNotification object:nil];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onHandleNotificationResponse:) name:AIDidReceiveNotificationResponse object:nil];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onHandleActionForIdentifier:) name:AIHandleActionNotification object:nil];
+        if (appid != nil && appid.length >= 0 && appkey != nil && appkey.length >= 0 && appid.length <= 0 && apikey != nil && apikey.length >= 0) {
+            [appICE setupKeys:appkey withapiKey:apikey withappId:appid otherSdkdeviceId:@""];
+        }
     } @catch (NSException *exception) {
         
     } @finally {
@@ -106,14 +78,12 @@ static NSInteger const kNotificationStackSize = 10;
     }
 }
 
--(void)onHandleLocalNotification:(NSNotification *)notif {
+-(void)onHandleLocalNotification:(UILocalNotification *)notification {
     @try {
         UIApplicationState appState = UIApplicationStateActive;
         UIApplication *application = [UIApplication sharedApplication];
         if ([application respondsToSelector:@selector(applicationState)])
             appState = application.applicationState;
-        
-        UILocalNotification *notification = (UILocalNotification *)notif.object;
         
         if (appState == UIApplicationStateActive)
         {
@@ -142,26 +112,6 @@ static NSInteger const kNotificationStackSize = 10;
             notif.applicationIconBadgeNumber = [[UIApplication sharedApplication] applicationIconBadgeNumber] + 1;
             [appICE receiveLocalNotification:notification];
         }
-    } @catch (NSException *exception) {
-        
-    } @finally {
-        
-    }
-}
-
--(void)onHandleRemoteNotification:(NSNotification *)notification {
-    @try {
-        [self onHandleRemoteFNotification:notification];
-    } @catch (NSException *exception) {
-        
-    } @finally {
-        
-    }
-}
-
--(void)onHandleRemoteFNotification:(NSNotification *)notif {
-    @try {
-        [self onHandleRemoteUNotification:notif.userInfo];
     } @catch (NSException *exception) {
         
     } @finally {
@@ -217,18 +167,6 @@ static NSInteger const kNotificationStackSize = 10;
             
             [appICE receivePushNotification:userInfo];
         }
-    } @catch (NSException *exception) {
-        
-    } @finally {
-        
-    }
-}
-
--(void)onHandleNotificationResponse:(NSNotification *)notif {
-    @try {
-        NSDictionary *userInfo = notif.object;
-        [[appICE sharedInstance] handleclickonpush:userInfo];
-        [self sendCallback:userInfo];
     } @catch (NSException *exception) {
         
     } @finally {
@@ -362,13 +300,12 @@ static NSInteger const kNotificationStackSize = 10;
     return params;
 }
 
--(void)onHandleOpenURLNotification:(NSNotification *)notif {
+-(void)onHandleOpenURLNotification:(NSURL *)url {
     
 }
 
--(void)onHandleActionForIdentifier:(NSNotification *)notif {
+-(void)onHandleActionForIdentifier:(NSString *)identifier {
     @try {
-        NSString *identifier = notif.object;
         if ([identifier isEqualToString:@"ACTION_ONE"]) {
             [[appICE sharedInstance] handleactionfirstforPUSH];
         }
@@ -422,6 +359,55 @@ static NSInteger const kNotificationStackSize = 10;
                 
                 [[appICE sharedInstance] startContext];
                 
+                CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+                [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+            } @catch(NSException *e) {
+                CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+                [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+            }
+        }];
+    } @catch (NSException *exception) {
+        
+    } @finally {
+        
+    }
+}
+
+-(void)initSdk:(CDVInvokedUrlCommand *)command {
+    @try {
+        [self.commandDelegate runInBackground:^{
+            @try {
+                NSObject *eventObj = [command argumentAtIndex:0];
+                NSString *appID = [eventObj valueForKey:@"appID"];
+                NSString *appKey = [eventObj valueForKey:@"appKey"];
+                NSString *apiKey = [eventObj valueForKey:@"apiKey"];
+                
+                if (appID != nil && appID.length >= 0 && appKey != nil && appKey.length >= 0 && apiKey != nil && apiKey.length >= 0) {
+                    [appICE setupKeys:appKey withapiKey:apiKey withappId:appID otherSdkdeviceId:@""];
+                }
+                
+                [self registerForRemoteNotification];
+                
+                [[appICE sharedInstance] startContext];
+                
+                CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+                [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+            } @catch(NSException *e) {
+                CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+                [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+            }
+        }];
+    } @catch (NSException *exception) {
+        
+    } @finally {
+        
+    }
+}
+
+-(void)trackTouches:(CDVInvokedUrlCommand *)command {
+    @try {
+        [self.commandDelegate runInBackground:^{
+            @try {
                 CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
                 [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
             } @catch(NSException *e) {

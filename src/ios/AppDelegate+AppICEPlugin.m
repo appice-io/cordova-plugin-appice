@@ -85,21 +85,14 @@ static id appdelegate;
 
 - (void)application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken {
     @try {
-        NSString* token = [[[[deviceToken description]
-                             stringByReplacingOccurrencesOfString:@"<" withString:@""]
-                            stringByReplacingOccurrencesOfString:@">" withString:@""]
-                           stringByReplacingOccurrencesOfString:@" " withString:@""];
-        
-        [[NSNotificationCenter defaultCenter] postNotificationName:AIRemoteNotificationDidRegister object:token];
+        [[AppICEPlugin appice] handleToken:deviceToken];
     } @catch(NSException *e){}
 }
 
 - (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error {
-    
     @try {
-        [[NSNotificationCenter defaultCenter] postNotificationName:AIRemoteNotificationRegisterError object:error];
+        [[AppICEPlugin appice] handleTokenError:error];
     } @catch (NSException *exception) {
-    } @finally {
     }
 }
 
@@ -108,21 +101,15 @@ static id appdelegate;
 - (void) application:(UIApplication*)application didReceiveLocalNotification:(UILocalNotification*)notification {
     
     @try {
-        [[NSNotificationCenter defaultCenter] postNotificationName:AIDidReceiveLocalNotification object:notification];
-    } @catch (NSException *exception) {
-        
-    } @finally {
-        
+        [[AppICEPlugin appice] onHandleLocalNotification:notification];
+    } @catch (NSException *exception) {   
     }
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
     @try {
-        [[NSNotificationCenter defaultCenter] postNotificationName:AIDidReceiveRemoteNotification object:userInfo];
-    } @catch (NSException *exception) {
-        
-    } @finally {
-        
+        [[AppICEPlugin appice] onHandleRemoteUNotification:userInfo];
+    } @catch (NSException *exception) {   
     }
 }
 
@@ -130,7 +117,7 @@ static id appdelegate;
 fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
 
     @try {
-        [[NSNotificationCenter defaultCenter] postNotificationName:AIDidReceiveRemoteFNotification object:userInfo];
+        [[AppICEPlugin appice] onHandleRemoteUNotification:userInfo];
         
         completionHandler(UIBackgroundFetchResultNewData);
     } @catch (NSException *exception) {
@@ -145,7 +132,7 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
        willPresentNotification:(UNNotification *)notification
          withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler {
     @try {
-        [[NSNotificationCenter defaultCenter] postNotificationName:AIDidReceiveRemoteNotification object:notification.request.content.userInfo];
+        [[AppICEPlugin appice] onHandleRemoteUNotification:notification.request.content.userInfo];
         
         completionHandler(UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionBadge | UNNotificationPresentationOptionSound);
     } @catch (NSException *exception) {
@@ -160,7 +147,7 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
     @try {
         NSDictionary *userInfo = response.notification.request.content.userInfo;
         
-        [[NSNotificationCenter defaultCenter] postNotificationName:AIDidReceiveNotificationResponse object:userInfo];
+        [[AppICEPlugin appice] onHandleNotificationUResponse:userInfo];
         
         completionHandler();
     } @catch (NSException *exception) {
@@ -176,7 +163,7 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
 - (void)application:(UIApplication *)application handleActionWithIdentifier:(NSString *)identifier forLocalNotification:(UILocalNotification *)notification completionHandler:(void(^)())completionHandler {
     
     @try {
-        [[NSNotificationCenter defaultCenter] postNotificationName:AIHandleActionNotification object:identifier];
+        [[AppICEPlugin appice] onHandleActionForIdentifier:identifier];
         
         if (completionHandler) {
             completionHandler();
@@ -191,7 +178,7 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
 - (void)application:(UIApplication *)application handleActionWithIdentifier:(NSString *)identifier forRemoteNotification:(NSDictionary *)userInfo completionHandler:(void (^)())completionHandler
 {
     @try {
-        [[NSNotificationCenter defaultCenter] postNotificationName:AIHandleActionNotification object:identifier];
+        [[AppICEPlugin appice] onHandleActionForIdentifier:identifier];
         
         if (completionHandler) {
             completionHandler();
@@ -210,11 +197,8 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
         if (!url) {
             return NO;
         }
-        [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:AIHandleOpenURLNotification object:url]];
+        [[AppICEPlugin appice] onHandleOpenURLNotification:url];
     } @catch (NSException *exception) {
-        
-    } @finally {
-        
     }
     return YES;
 }
@@ -224,23 +208,17 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
         if (!url) {
             return NO;
         }
-        [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:AIHandleOpenURLNotification object:url]];
+        [[AppICEPlugin appice] onHandleOpenURLNotification:url];
     
     } @catch (NSException *exception) {
-        
-    } @finally {
-        
     }
     return YES;
 }
 
 - (void)openURL:(NSURL*)url options:(NSDictionary<NSString *, id> *)options completionHandler:(void (^ __nullable)(BOOL success))completion {
     @try {
-        [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:AIHandleOpenURLNotification object:url]];
+        [[AppICEPlugin appice] onHandleOpenURLNotification:url];
     } @catch (NSException *exception) {
-        
-    } @finally {
-        
     }
 }
 

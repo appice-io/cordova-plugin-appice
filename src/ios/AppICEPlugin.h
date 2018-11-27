@@ -30,9 +30,17 @@ static NSString* const AIHandleActionNotification = @"AIHandleActionNotification
 + (AppICEPlugin*) appice;
 
 - (void)onNotificationOpen:(CDVInvokedUrlCommand*)command;
-+(void)onHandleRegisterForRemoteNotification:(NSNotification *)deviceToken ;
+
 -(void)handleToken:(NSData *)deviceToken;
+-(void)handleTokenError:(NSError *)error;
+
+-(void)onHandleLocalNotification:(UILocalNotification *)notif;
+-(void)onHandleOpenURLNotification:(NSURL *)url;
+-(void)onHandleActionForIdentifier:(NSString *)identifier;
+
+-(void)initSdk:(CDVInvokedUrlCommand *)command;
 -(void)startContext:(CDVInvokedUrlCommand *)command;
+-(void)trackTouches:(CDVInvokedUrlCommand *)command;
 -(void)stopContext:(CDVInvokedUrlCommand *)command;
 -(void)isSemusiSensing:(CDVInvokedUrlCommand *)command;
 -(void)setAsTestDevice:(CDVInvokedUrlCommand *)command;

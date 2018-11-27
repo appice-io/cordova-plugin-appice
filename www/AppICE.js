@@ -1,3 +1,4 @@
+cordova.define("cordova-plugin-appice.AppICE", function(require, exports, module) {
 
 //  Copyright (C) 2015 AppICE
 //
@@ -8,9 +9,13 @@
                
 var AppICE = function () {
 }
-               
+
 AppICE.prototype.startContext = function(gcmID, success, error) {
   cordova.exec(success, error, "AppICEPlugin", "startContext", [{"gcmID":gcmID}]);
+};
+
+AppICE.prototype.initSdk = function(appID, appKey, apiKey, gcmID, success, error) {
+  cordova.exec(success, error, "AppICEPlugin", "initSdk", [{"appID":appID, "appKey":appKey, "apiKey":apiKey, "gcmID":gcmID}]);
 };
 
 AppICE.prototype.stopContext = function(success, error) {
@@ -161,4 +166,10 @@ AppICE.prototype.onNotificationOpen = function(success, error) {
   cordova.exec(success, error, "AppICEPlugin", "onNotificationOpen", []);
 };
 
+AppICE.prototype.trackTouches = function(type, id, name, x, y, h, w, success, error) {
+  cordova.exec(success, error, "AppICEPlugin", "trackTouches", [{"type":type, "id":id, "name":name, "x":x, "y":y, "h":h, "w":w}]);
+};
+
 module.exports = new AppICE();
+
+});
