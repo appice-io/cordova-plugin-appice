@@ -12,6 +12,8 @@ var AppICE = function () {
 
 AppICE.prototype.startContext = function(gcmID, success, error) {
   cordova.exec(success, error, "AppICEPlugin", "startContext", [{"gcmID":gcmID}]);
+
+  AppICE.trackScreens();
 };
 
 AppICE.prototype.initSdk = function(appID, appKey, apiKey, gcmID, success, error) {
@@ -166,8 +168,72 @@ AppICE.prototype.onNotificationOpen = function(success, error) {
   cordova.exec(success, error, "AppICEPlugin", "onNotificationOpen", []);
 };
 
-AppICE.prototype.trackTouches = function(type, id, name, x, y, h, w, success, error) {
-  cordova.exec(success, error, "AppICEPlugin", "trackTouches", [{"type":type, "id":id, "name":name, "x":x, "y":y, "h":h, "w":w}]);
+AppICE.prototype.trackTouchS = function(e, success, error) {
+    var touchobj = e.changedTouches[0]
+    swipedir = 'none'
+    dist = 0
+    startX = touchobj.pageX
+    startY = touchobj.pageY
+    startTime = new Date().getTime()
+};
+
+AppICE.prototype.trackTouchE = function(e, success, error) {
+    var touchobj = e.changedTouches[0]
+    distX = touchobj.pageX - startX
+    distY = touchobj.pageY - startY
+    elapsedTime = new Date().getTime() - startTime
+    if (elapsedTime <= 1500) {
+        if (Math.abs(distX) >= 150 && Math.abs(distY) <= 250) {
+            swipedir = (distX < 0)? 'left' : 'right'
+        }
+        else if (Math.abs(distY) >= 150 && Math.abs(distX) <= 250) {
+            swipedir = (distY < 0)? 'up' : 'down'
+        }
+    }
+
+    var inputArr = [];
+    var inputs = document.getElementsByTagName('input');
+    for (var index = 0; index < inputs.length; ++index) {
+        var element = inputs[index];
+        var data = {
+            "t":element.tagName,
+            "i":element.id,
+            "n":element.name,
+            "y":element.getBoundingClientRect().top + window.scrollY,
+            "x":element.getBoundingClientRect().left + window.scrollX,
+            "w":element.getBoundingClientRect().width,
+            "h":element.getBoundingClientRect().height
+        };
+        inputArr.push(data);
+    }
+
+    if (swipedir == 'none') {
+        var t = e.target;
+        cordova.exec(success, error, "AppICEPlugin", "trackTouches", [{"type":t.tagName, "id":t.id, "name":t.name, "py":t.getBoundingClientRect().top + window.scrollY, "px":t.getBoundingClientRect().left + window.scrollX, "pw":t.getBoundingClientRect().width, "ph":t.getBoundingClientRect().height, "x":touchobj.screenX, "y":touchobj.screenY, "h":document.documentElement.clientHeight, "w":document.documentElement.clientWidth, "arr":inputArr}]);
+    }
+    else {
+        cordova.exec(success, error, "AppICEPlugin", "trackSwipes", [{"type":swipedir, "x1":startX, "y1":startY, "x2":touchobj.screenX, "y2":touchobj.screenY, "h":document.documentElement.clientHeight, "w":document.documentElement.clientWidth, "arr":inputArr}]);
+    }
+};
+
+AppICE.prototype.trackScreens = function(e, success, error) {
+    var inputArr = [];
+    var inputs = document.getElementsByTagName('input');
+    for (var index = 0; index < inputs.length; ++index) {
+        var element = inputs[index];
+        var data = {
+            "t":element.tagName,
+            "i":element.id,
+            "n":element.name,
+            "y":element.getBoundingClientRect().top + window.scrollY,
+            "x":element.getBoundingClientRect().left + window.scrollX,
+            "w":element.getBoundingClientRect().width,
+            "h":element.getBoundingClientRect().height
+        };
+        inputArr.push(data);
+    }
+
+    cordova.exec(success, error, "AppICEPlugin", "trackScreens", [{"old":e.oldURL, "new":e.newURL, "loc":location.hash, "h":document.documentElement.clientHeight, "w":document.documentElement.clientWidth, "arr":inputArr}]);
 };
 
 module.exports = new AppICE();

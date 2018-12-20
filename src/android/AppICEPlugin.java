@@ -12,10 +12,8 @@ package com.appice.cordova;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Toast;
@@ -118,6 +116,7 @@ public class AppICEPlugin extends CordovaPlugin {
 
             // Init sdk with your config
             Api.startContext(cordova.getActivity().getApplicationContext(), config);
+
             callbackContext.success();
         } catch (Exception e) {
             e.printStackTrace();
@@ -685,20 +684,158 @@ public class AppICEPlugin extends CordovaPlugin {
                 double webWidth = (double) root.optInt("w");
                 double webHeight = (double) root.optInt("h");
 
-                double x = root.optDouble("x");
-                double y = root.optDouble("y");
-
                 double wRatio = (screenWidth / webWidth);
                 double hRatio = (screenHeight / webHeight);
 
-                double x1 = x * wRatio;
-                double y1 = y * hRatio;
-                root.put("x", x1);
-                root.put("y", y1);
+                // store rescaled x-y co-ordinates of touch
+                double x = root.optDouble("x");
+                double y = root.optDouble("y");
+                x = x * wRatio;
+                y = y * hRatio;
+                root.put("x", x);
+                root.put("y", y);
+
+                // store rescaled px-py-pw-ph co-ordinates of touch
+                double px = root.optDouble("px");
+                double py = root.optDouble("py");
+                double pw = root.optDouble("pw");
+                double ph = root.optDouble("ph");
+                px = px * wRatio;
+                py = py * hRatio;
+                pw = pw * wRatio;
+                ph = ph * hRatio;
+                root.put("px", px);
+                root.put("py", py);
+                root.put("pw", pw);
+                root.put("ph", ph);
+
+                // re-store rescaled x-y-w-h co-ordinates of input fld
+                JSONArray newObjects = new JSONArray();
+                JSONArray objects = root.optJSONArray("arr");
+                if (objects != null && objects.length() > 0) {
+                    for (int i = 0; i < objects.length(); i++) {
+                        JSONObject inputFld = objects.optJSONObject(i);
+                        if (inputFld != null && inputFld.length() > 0) {
+                            JSONObject obj = new JSONObject(inputFld.toString());
+                            obj.put("x", inputFld.optDouble("x") * wRatio);
+                            obj.put("y", (inputFld.optDouble("y") * hRatio) + inputFld.optDouble("h"));
+                            obj.put("w", inputFld.optDouble("w") * wRatio);
+                            obj.put("h", inputFld.optDouble("h") * hRatio);
+                            newObjects.put(obj);
+                        }
+                    }
+                }
+                root.put("arr", newObjects);
             }
 
             View rootView = cordova.getActivity().getWindow().getDecorView().getRootView();
             ContextSdk.trackTouches(root, cordova.getActivity().getApplicationContext(), rootView, cordova.getActivity());
+
+            callbackContext.success();
+        } catch (Exception e) {
+            e.printStackTrace();
+            callbackContext.error(e.getMessage());
+        }
+    }
+
+    @CordovaMethod
+    private void trackSwipes(JSONArray data, CallbackContext callbackContext) {
+        try {
+            DisplayMetrics dm = new DisplayMetrics();
+            cordova.getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
+            int screenWidth = dm.widthPixels;
+            int screenHeight = dm.heightPixels;
+
+            JSONObject root = data.getJSONObject(0);
+            if (root != null) {
+                double webWidth = (double) root.optInt("w");
+                double webHeight = (double) root.optInt("h");
+
+                double wRatio = (screenWidth / webWidth);
+                double hRatio = (screenHeight / webHeight);
+
+                // store rescaled x-y co-ordinates of touch
+                double x1 = root.optDouble("x1");
+                double y1 = root.optDouble("y1");
+                x1 = x1 * wRatio;
+                y1 = y1 * hRatio;
+                root.put("x1", x1);
+                root.put("y1", y1);
+
+                // store rescaled x-y co-ordinates of touch
+                double x2 = root.optDouble("x2");
+                double y2 = root.optDouble("y2");
+                x2 = x2 * wRatio;
+                y2 = y2 * hRatio;
+                root.put("x2", x2);
+                root.put("y2", y2);
+
+                // re-store rescaled x-y-w-h co-ordinates of input fld
+                JSONArray newObjects = new JSONArray();
+                JSONArray objects = root.optJSONArray("arr");
+                if (objects != null && objects.length() > 0) {
+                    for (int i = 0; i < objects.length(); i++) {
+                        JSONObject inputFld = objects.optJSONObject(i);
+                        if (inputFld != null && inputFld.length() > 0) {
+                            JSONObject obj = new JSONObject(inputFld.toString());
+                            obj.put("x", inputFld.optDouble("x") * wRatio);
+                            obj.put("y", (inputFld.optDouble("y") * hRatio) + inputFld.optDouble("h"));
+                            obj.put("w", inputFld.optDouble("w") * wRatio);
+                            obj.put("h", inputFld.optDouble("h") * hRatio);
+                            newObjects.put(obj);
+                        }
+                    }
+                }
+                root.put("arr", newObjects);
+            }
+
+            View rootView = cordova.getActivity().getWindow().getDecorView().getRootView();
+            ContextSdk.trackSwipes(root, cordova.getActivity().getApplicationContext(), rootView, cordova.getActivity());
+
+            callbackContext.success();
+        } catch (Exception e) {
+            e.printStackTrace();
+            callbackContext.error(e.getMessage());
+        }
+    }
+
+    @CordovaMethod
+    private void trackScreens(JSONArray data, CallbackContext callbackContext) {
+        try {
+            DisplayMetrics dm = new DisplayMetrics();
+            cordova.getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
+            int screenWidth = dm.widthPixels;
+            int screenHeight = dm.heightPixels;
+
+            JSONObject root = data.getJSONObject(0);
+            if (root != null) {
+                double webWidth = (double) root.optInt("w");
+                double webHeight = (double) root.optInt("h");
+
+                double wRatio = (screenWidth / webWidth);
+                double hRatio = (screenHeight / webHeight);
+
+                // re-store rescaled x-y-w-h co-ordinates of input fld
+                JSONArray newObjects = new JSONArray();
+                JSONArray objects = root.optJSONArray("arr");
+                if (objects != null && objects.length() > 0) {
+                    for (int i = 0; i < objects.length(); i++) {
+                        JSONObject inputFld = objects.optJSONObject(i);
+                        if (inputFld != null && inputFld.length() > 0) {
+                            JSONObject obj = new JSONObject(inputFld.toString());
+                            obj.put("x", inputFld.optDouble("x") * wRatio);
+                            obj.put("y", (inputFld.optDouble("y") * hRatio) + inputFld.optDouble("h"));
+                            obj.put("w", inputFld.optDouble("w") * wRatio);
+                            obj.put("h", inputFld.optDouble("h") * hRatio);
+                            newObjects.put(obj);
+                        }
+                    }
+                }
+                root.put("arr", newObjects);
+            }
+
+            View rootView = cordova.getActivity().getWindow().getDecorView().getRootView();
+            ContextSdk.trackScreens(root, cordova.getActivity().getApplicationContext(), rootView, cordova.getActivity());
 
             callbackContext.success();
         } catch (Exception e) {

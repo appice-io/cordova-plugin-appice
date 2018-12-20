@@ -20,7 +20,7 @@ public class NotificationEventService extends JobService {
             if (bundle != null) {
                 final Bundle bundle1 = toBundle(bundle);
                 if (bundle1 != null) {
-                    new Timer().schedule(new TimerTask() {
+                    new Timer("AppICE-NotifService-Timer").schedule(new TimerTask() {
                         @Override
                         public void run() {
                             CampaignCampsReceiver rc = new CampaignCampsReceiver();

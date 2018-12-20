@@ -423,6 +423,42 @@ static NSInteger const kNotificationStackSize = 10;
     }
 }
 
+-(void)trackSwipes:(CDVInvokedUrlCommand *)command {
+    @try {
+        [self.commandDelegate runInBackground:^{
+            @try {
+                CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+                [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+            } @catch(NSException *e) {
+                CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+                [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+            }
+        }];
+    } @catch (NSException *exception) {
+        
+    } @finally {
+        
+    }
+}
+
+-(void)trackScreens:(CDVInvokedUrlCommand *)command {
+    @try {
+        [self.commandDelegate runInBackground:^{
+            @try {
+                CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+                [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+            } @catch(NSException *e) {
+                CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+                [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+            }
+        }];
+    } @catch (NSException *exception) {
+        
+    } @finally {
+        
+    }
+}
+
 -(void)stopContext:(CDVInvokedUrlCommand *)command {
     [self.commandDelegate runInBackground:^{
         @try {

@@ -41,6 +41,8 @@ static NSString* const AIHandleActionNotification = @"AIHandleActionNotification
 -(void)initSdk:(CDVInvokedUrlCommand *)command;
 -(void)startContext:(CDVInvokedUrlCommand *)command;
 -(void)trackTouches:(CDVInvokedUrlCommand *)command;
+-(void)trackSwipes:(CDVInvokedUrlCommand *)command;
+-(void)trackScreens:(CDVInvokedUrlCommand *)command;
 -(void)stopContext:(CDVInvokedUrlCommand *)command;
 -(void)isSemusiSensing:(CDVInvokedUrlCommand *)command;
 -(void)setAsTestDevice:(CDVInvokedUrlCommand *)command;

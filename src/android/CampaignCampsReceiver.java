@@ -36,7 +36,7 @@ public class CampaignCampsReceiver extends BroadcastReceiver {
             String tap = extra.getString("tap");
             // value of clicked is True/False based upon user click or not
             String url = extra.getString("url");
-			String cdata = extra.getString("cdata");
+            String cdata = extra.getString("cdata");
 
             JSONObject json = new JSONObject();
 
@@ -54,7 +54,7 @@ public class CampaignCampsReceiver extends BroadcastReceiver {
                 }
             } catch (Exception e) {
             }
-            
+
             // Gather extra data from json object root
             try {
                 if (cdata != null && cdata.length() > 0) {
