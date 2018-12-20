@@ -217,6 +217,7 @@ static NSInteger const kNotificationStackSize = 10;
                                                                    NSASCIIStringEncoding]];
                                 __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
                                 [request setRequestMethod:@"GET"];
+                                request.timeOutSeconds = 5;
                                 [request startSynchronous];
                                 NSError *error = [request error];
                                 if (!error) {
@@ -850,7 +851,7 @@ static NSInteger const kNotificationStackSize = 10;
         if (self.notificationStack != nil && [self.notificationStack count]) {
             NSLog(@"Appice setcallback a2");
             for (NSDictionary *userInfo in self.notificationStack) {
-                NSLog(@"Appice setcallback a3  %@");
+                NSLog(@"Appice setcallback a3");
                 [self sendNotification:userInfo];
             }
             [self.notificationStack removeAllObjects];
