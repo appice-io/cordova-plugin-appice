@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-appice",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "AppICE Plugin for Cordova/PhoneGap",
   "cordova": {
     "id": "cordova-plugin-appice",

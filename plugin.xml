@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="cordova-plugin-appice" version="1.2.4">
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="cordova-plugin-appice" version="1.2.5">
     <name>AppICE</name>
     <description>AppICE Plugin for Cordova/PhoneGap</description>
     <license>Commercial</license>

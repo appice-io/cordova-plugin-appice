@@ -23,7 +23,6 @@ module.exports = function(context) {
 		shell.cp('-f', modifiedFile1, firebaseFile1);
 	} catch(err) {
 	}
-
 	var firebaseFile2 = path.join(pluginsFirebaseRoot, '/src/android/FirebasePluginMessagingService.java');
 	if (fs.existsSync(firebaseFile2)) {
 		try {
@@ -31,9 +30,21 @@ module.exports = function(context) {
 		} catch(err) {
 		}
 	}
-
 	try {
 		shell.cp('-f', modifiedFile1, firebaseFile2);
+	} catch(err) {
+	}
+	
+	var platformwww1 = path.join(platformRoot, '/platform_www/plugins/cordova-plugin-appice/www/AppICE.js');
+	var platformwww2 = path.join(pluginsAppiceRoot, '/www/AppICE.js');
+	if (fs.existsSync(platformwww1)) {
+		try {
+			shell.rm('-Rf', platformwww1);
+		} catch(err) {
+		}
+	}
+	try {
+		shell.cp('-f', platformwww2, platformwww1);
 	} catch(err) {
 	}
 
