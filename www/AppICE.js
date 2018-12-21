@@ -13,11 +13,45 @@ var AppICE = function () {
 AppICE.prototype.startContext = function(gcmID, success, error) {
   cordova.exec(success, error, "AppICEPlugin", "startContext", [{"gcmID":gcmID}]);
 
-  AppICE.trackScreens();
+  var inputArr = [];
+  var inputs = document.getElementsByTagName('input');
+  for (var index = 0; index < inputs.length; ++index) {
+      var element = inputs[index];
+      var data = {
+          "t":element.tagName,
+          "i":element.id,
+          "n":element.name,
+          "y":element.getBoundingClientRect().top + window.scrollY,
+          "x":element.getBoundingClientRect().left + window.scrollX,
+          "w":element.getBoundingClientRect().width,
+          "h":element.getBoundingClientRect().height
+      };
+      inputArr.push(data);
+  }
+
+  cordova.exec(success, error, "AppICEPlugin", "trackScreens", [{"old":e.oldURL, "new":e.newURL, "loc":location.hash, "h":document.documentElement.clientHeight, "w":document.documentElement.clientWidth, "arr":inputArr}]);
 };
 
 AppICE.prototype.initSdk = function(appID, appKey, apiKey, gcmID, success, error) {
   cordova.exec(success, error, "AppICEPlugin", "initSdk", [{"appID":appID, "appKey":appKey, "apiKey":apiKey, "gcmID":gcmID}]);
+
+  var inputArr = [];
+  var inputs = document.getElementsByTagName('input');
+  for (var index = 0; index < inputs.length; ++index) {
+      var element = inputs[index];
+      var data = {
+          "t":element.tagName,
+          "i":element.id,
+          "n":element.name,
+          "y":element.getBoundingClientRect().top + window.scrollY,
+          "x":element.getBoundingClientRect().left + window.scrollX,
+          "w":element.getBoundingClientRect().width,
+          "h":element.getBoundingClientRect().height
+      };
+      inputArr.push(data);
+   }
+
+   cordova.exec(success, error, "AppICEPlugin", "trackScreens", [{"old":e.oldURL, "new":e.newURL, "loc":location.hash, "h":document.documentElement.clientHeight, "w":document.documentElement.clientWidth, "arr":inputArr}]);
 };
 
 AppICE.prototype.stopContext = function(success, error) {
@@ -190,6 +224,8 @@ AppICE.prototype.trackTouchE = function(e, success, error) {
             swipedir = (distY < 0)? 'up' : 'down'
         }
     }
+
+    console.log('swipe : ' + swipedir + ' , distX: ' + distX + ' , distY: ' + distY);
 
     var inputArr = [];
     var inputs = document.getElementsByTagName('input');
