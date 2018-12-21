@@ -29,7 +29,7 @@ AppICE.prototype.startContext = function(gcmID, success, error) {
       inputArr.push(data);
   }
 
-  cordova.exec(success, error, "AppICEPlugin", "trackScreens", [{"old":e.oldURL, "new":e.newURL, "loc":location.hash, "h":document.documentElement.clientHeight, "w":document.documentElement.clientWidth, "arr":inputArr}]);
+  cordova.exec(success, error, "AppICEPlugin", "trackScreens", [{"old":"", "new":"", "loc":location.hash, "h":document.documentElement.clientHeight, "w":document.documentElement.clientWidth, "arr":inputArr}]);
 };
 
 AppICE.prototype.initSdk = function(appID, appKey, apiKey, gcmID, success, error) {
@@ -51,7 +51,7 @@ AppICE.prototype.initSdk = function(appID, appKey, apiKey, gcmID, success, error
       inputArr.push(data);
    }
 
-   cordova.exec(success, error, "AppICEPlugin", "trackScreens", [{"old":e.oldURL, "new":e.newURL, "loc":location.hash, "h":document.documentElement.clientHeight, "w":document.documentElement.clientWidth, "arr":inputArr}]);
+   cordova.exec(success, error, "AppICEPlugin", "trackScreens", [{"old":"", "new":"", "loc":location.hash, "h":document.documentElement.clientHeight, "w":document.documentElement.clientWidth, "arr":inputArr}]);
 };
 
 AppICE.prototype.stopContext = function(success, error) {
