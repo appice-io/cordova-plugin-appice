@@ -899,6 +899,24 @@ static NSInteger const kNotificationStackSize = 10;
     }
 }
 
+-(void)validateIntegration:(CDVInvokedUrlCommand *)command {
+    @try {
+        [self.commandDelegate runInBackground:^{
+            @try {
+                CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+                [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+            } @catch(NSException *e) {
+                CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+                [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+            }
+        }];
+    } @catch (NSException *exception) {
+        
+    } @finally {
+        
+    }
+}
+
 - (void)sendNotification:(NSDictionary *)userInfo {
     @try {
         NSLog(@"Appice send-notifcallback a1");

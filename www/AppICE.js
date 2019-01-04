@@ -10,6 +10,10 @@ cordova.define("cordova-plugin-appice.AppICE", function(require, exports, module
 var AppICE = function () {
 }
 
+AppICE.prototype.validateIntegration = function(success, error) {
+  cordova.exec(success, error, "AppICEPlugin", "validateIntegration", []);
+};
+
 AppICE.prototype.startContext = function(gcmID, success, error) {
   cordova.exec(success, error, "AppICEPlugin", "startContext", [{"gcmID":gcmID}]);
 
@@ -225,7 +229,7 @@ AppICE.prototype.trackTouchE = function(e, success, error) {
         }
     }
 
-    console.log('swipe : ' + swipedir + ' , distX: ' + distX + ' , distY: ' + distY);
+//    console.log('swipe : ' + swipedir + ' , distX: ' + distX + ' , distY: ' + distY);
 
     var inputArr = [];
     var inputs = document.getElementsByTagName('input');

@@ -30,6 +30,7 @@ static NSString* const AIHandleActionNotification = @"AIHandleActionNotification
 + (AppICEPlugin*) appice;
 
 - (void)onNotificationOpen:(CDVInvokedUrlCommand*)command;
+- (void)validateIntegration:(CDVInvokedUrlCommand*)command;
 
 -(void)handleToken:(NSData *)deviceToken;
 -(void)handleTokenError:(NSError *)error;
