@@ -55,9 +55,23 @@ else if (ionic-plugin) {
     ionic prepare
 }
 
+// To validation integration process
+AppICE.validateIntegration(function(success) {
+	console.log("Integration Success");
+}, function(error) {
+	console.error("Ingetration Error : " + error);
+});
+
+// To handle notification click handling
+AppICE.onNotificationOpen(function(notification) {
+    console.log("Notification Data : " + JSON.stringify(notification));
+}, function(error) {
+    console.error("Notification Error : " + error);
+});
+
 // To use appice in your project
 // Custom gcm-id for already existing gcm being used
-AppICE.startContext("<Custom gcm id to use>");
+AppICE.initSdk("<app_id>","<app_key>","<api_key>","<Custom gcm id to use>");
 
 // To send events via appice - only key
 AppICE.tagEvent("<Key of event>");
@@ -73,13 +87,6 @@ AppICE.setCustomVariable("<variable name>", "<variable value>");
 
 // To set user info
 AppICE.setUser("<user-name>", "<user-phone>", "<user-email>");
-
-// To handle notification click handling
-AppICE.onNotificationOpen(function(notification) {
-    console.log("Notification Data : " + JSON.stringify(notification));
-}, function(error) {
-    console.error("Notification Error : " + error);
-});
 
 // Build project and run
 if (cordova-plugin) {

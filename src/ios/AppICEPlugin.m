@@ -68,7 +68,7 @@ static NSInteger const kNotificationStackSize = 10;
         NSString *appkey = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"AppICEAppKey"];
         NSString *apikey = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"AppICEApiKey"];
         
-        if (appid != nil && appid.length >= 0 && appkey != nil && appkey.length >= 0 && appid.length <= 0 && apikey != nil && apikey.length >= 0) {
+        if (appid != nil && appid.length >= 0 && appkey != nil && appkey.length >= 0 && apikey != nil && apikey.length >= 0) {
             [appICE setupKeys:appkey withapiKey:apikey withappId:appid otherSdkdeviceId:@""];
         }
     } @catch (NSException *exception) {
